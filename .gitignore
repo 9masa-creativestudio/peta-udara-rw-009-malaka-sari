@@ -1,0 +1,16 @@
+# Large local XYZ tiles
+XYZ Tiles/
+XYZ_Tiles/
+tiles/
+
+# QGIS temporary / backup files
+*.qgz~
+*.qgs~
+*.aux.xml
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Temporary qgis2web exports
+temp/

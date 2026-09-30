@@ -205,7 +205,7 @@
         abstract.show = function () {
             this._div.classList.remove("abstract");
             this._div.classList.add("abstractUncollapsed");
-            this._div.innerHTML = 'Foto udara drone tanggal 24 September 2026 dilengkapi informasi batas wilayah setiap RT di RW 009 Malaka Sari.<br /><br />© Karang Taruna RW 009 Malaka Sari';
+            this._div.innerHTML = 'Foto udara diambil pada tanggal 24 September 2026, dilengkapi informasi batas wilayah setiap RT di RW 009 Malaka Sari.<br /><br />© Karang Taruna RW 009 Malaka Sari';
         };
         abstract.addTo(map);
         var zoomControl = L.control.zoom({
@@ -251,7 +251,7 @@
         layer_GoogleSatelite_1;
         map.createPane('pane_OrthophotoDroneRW009MalakSari24September2026_2');
         map.getPane('pane_OrthophotoDroneRW009MalakSari24September2026_2').style.zIndex = 402;
-        var layer_OrthophotoDroneRW009MalakSari24September2026_2 = L.tileLayer('file:///D:/Punya KAMIL/Dari Documents/Karang Taruna RW. 09/9 MASA Creative Studio/Mapping RW 009 MS/XYZ Tiles/{z}/{x}/{y}.png', {
+        var layer_OrthophotoDroneRW009MalakSari24September2026_2 = L.tileLayer('https://pub-7e62d9e579154bbfb53e924930d63448.r2.dev/{z}/{x}/{y}.png', {
             pane: 'pane_OrthophotoDroneRW009MalakSari24September2026_2',
             opacity: 1.0,
             attribution: '',
@@ -333,7 +333,7 @@
             {
                 label: '<b>Peta RW 009 Malaka Sari</b>', selectAllCheckbox: true, children: [
                     { label: '<img src="legend/BatasRT_3.png" /> Batas RT', layer: layer_BatasRT_3 },
-                    { label: "Orthophoto Drone RW 009 Malak Sari — 24 September 2026", layer: layer_OrthophotoDroneRW009MalakSari24September2026_2 },]
+                    { label: "Orthophoto Drone RW 009 Malaka Sari", layer: layer_OrthophotoDroneRW009MalakSari24September2026_2 },]
             },
             {
                 label: '<b>Basemap</b>', selectAllCheckbox: true, children: [
@@ -357,7 +357,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['label'] !== null ? String('<div style="color: #ffffff; font-size: 11pt; font-weight: bold; font-family: \'Century Gothic\', sans-serif;">' + layer.feature.properties['label']).replace(/\\n/g, '<br>') + '</div>' : ''), { permanent: true, offset: [-0, -16], className: 'css_BatasRT_3' });
+            layer.bindTooltip((layer.feature.properties['label'] !== null ? String('<div style="color: #ffffff; font-size: 11pt; font-weight: bold; font-family: \'Century Gothic\', sans-serif;">' + layer.feature.properties['label']).replace(/\\n/g, '<br>') + '</div>' : ''), { permanent: true, offset: (layer.feature.properties['rt'] === '009' ? [-90, -16] : [-25, -16]), className: 'css_BatasRT_3' });
             labels.push(layer);
             totalMarkers += 1;
             layer.added = true;

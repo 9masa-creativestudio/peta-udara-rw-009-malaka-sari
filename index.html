@@ -1,67 +1,125 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/qgis2web.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
-        <style>
-        html, body, #map {
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet.photon.css">
+    <link rel="stylesheet" href="css/leaflet-measure.css">
+    <style>
+        html,
+        body,
+        #map {
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
         }
-        </style>
-        <title>Peta Udara RW 009 Malaka Sari</title>
-    </head>
-    <body>
-        <div id="map">
-        </div>
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet.photon.js"></script>
-        <script src="js/leaflet-measure.js"></script>
-        <script>
+
+        .title-with-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-with-logo img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .title-with-logo h2 {
+            margin: 0;
+            line-height: 1.15;
+        }
+
+        @media (max-width: 600px) {
+            .title-with-logo {
+                gap: 7px;
+            }
+
+            .title-with-logo img {
+                height: 34px;
+            }
+
+            .title-with-logo h2 {
+                font-size: 16px;
+            }
+        }
+    </style>
+    <title>Peta Interaktif RW 009 Malaka Sari</title>
+</head>
+
+<body>
+    <div id="map">
+    </div>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet.photon.js"></script>
+    <script src="js/leaflet-measure.js"></script>
+    <script src="data/BatasRT_3.js"></script>
+    <script>
         var highlightLayer;
         function highlightFeature(e) {
+
+            // Jangan highlight Batas RT saat zoom di bawah 17
+            if (map.getZoom() < 17) {
+                return;
+            }
+
             highlightLayer = e.target;
-            highlightLayer.openPopup();
+
+            if (e.target.feature.geometry.type === 'LineString') {
+                highlightLayer.setStyle({
+                    color: '#ffff00'
+                });
+            } else {
+                highlightLayer.setStyle({
+                    color: '#ffff00',
+                    weight: 1,
+                    fillColor: '#ffff00',
+                    fillOpacity: 0.20
+                });
+            }
+
+            // highlightLayer.openPopup();
         }
+
         var map = L.map('map', {
-            zoomControl:false, maxZoom:23, minZoom:14
-        }).fitBounds([[-6.2329066978096455,106.92514014009114],[-6.227527223411035,106.93350114375431]]);
+            zoomControl: false, maxZoom: 23, minZoom: 14
+        }).fitBounds([[-6.233201292845014, 106.9249968185847], [-6.228267445160231, 106.93371223722342]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/qgis2web/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
-         var tempDiv = document.createElement('div');
-         tempDiv.innerHTML = content;
-         var rows = tempDiv.querySelectorAll('tr');
-         for (var i = 0; i < rows.length; i++) {
-             var td = rows[i].querySelector('td.visible-with-data');
-             var key = td ? td.id : '';
-             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
-                 rows[i].parentNode.removeChild(rows[i]);
-             }
-         }
-         return tempDiv.innerHTML;
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var rows = tempDiv.querySelectorAll('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var td = rows[i].querySelector('td.visible-with-data');
+                var key = td ? td.id : '';
+                if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                    rows[i].parentNode.removeChild(rows[i]);
+                }
+            }
+            return tempDiv.innerHTML;
         }
         // modify popup if contains media
         function addClassToPopupIfMedia(content, popup) {
@@ -78,10 +136,10 @@
                         if (img.complete && img.naturalHeight > 0) {
                             popup.update();
                         } else {
-                            img.addEventListener('load', function() {
+                            img.addEventListener('load', function () {
                                 popup.update();
                             });
-                            img.addEventListener('error', function() {
+                            img.addEventListener('error', function () {
                                 popup.update();
                             });
                         }
@@ -92,7 +150,7 @@
                     audio.src = src;
                     imgTd.parentNode.replaceChild(audio, imgTd);
                     popup._contentNode.classList.add('media');
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.setContent(tempDiv.innerHTML);
                         popup.update();
                     }, 10);
@@ -107,10 +165,10 @@
                     imgTd.parentNode.replaceChild(video, imgTd);
                     popup._contentNode.classList.add('media');
                     // Aggiorna il popup quando il video carica i metadati
-                    video.addEventListener('loadedmetadata', function() {
+                    video.addEventListener('loadedmetadata', function () {
                         popup.update();
                     });
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.setContent(tempDiv.innerHTML);
                         popup.update();
                     }, 10);
@@ -121,29 +179,33 @@
                 popup._contentNode.classList.remove('media');
             }
         }
-        var title = new L.Control({'position':'topleft'});
+        var title = new L.Control({ 'position': 'topleft' });
         title.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info');
             this.update();
             return this._div;
         };
         title.update = function () {
-            this._div.innerHTML = '<h2>Peta Udara RW 009 Malaka Sari</h2>';
+            this._div.innerHTML =
+                '<div class="title-with-logo">' +
+                '<img src="images/logo-rw-009.png" alt="Logo RW 009">' +
+                '<h2>Peta Interaktif RW 009<br>Malaka Sari</h2>' +
+                '</div>';
         };
         title.addTo(map);
-        var abstract = new L.Control({'position':'topleft'});
+        var abstract = new L.Control({ 'position': 'topleft' });
         abstract.onAdd = function (map) {
             this._div = L.DomUtil.create('div',
-            'leaflet-control abstract');
+                'leaflet-control abstract');
             this._div.id = 'abstract'
 
-                abstract.show();
-                return this._div;
-            };
-            abstract.show = function () {
-                this._div.classList.remove("abstract");
-                this._div.classList.add("abstractUncollapsed");
-                this._div.innerHTML = 'Hasil foto udara menggunakan drone.<br />24 September 2026.<br /><br />Copyright: <br />Karang Taruna RW 009 Malaka Sari';
+            abstract.show();
+            return this._div;
+        };
+        abstract.show = function () {
+            this._div.classList.remove("abstract");
+            this._div.classList.add("abstractUncollapsed");
+            this._div.innerHTML = 'Foto udara drone tanggal 24 September 2026 dilengkapi informasi batas wilayah setiap RT di RW 009 Malaka Sari.<br /><br />© Karang Taruna RW 009 Malaka Sari';
         };
         abstract.addTo(map);
         var zoomControl = L.control.zoom({
@@ -174,6 +236,7 @@
             maxNativeZoom: 18
         });
         layer_OpenStreetMapHOT_0;
+        map.addLayer(layer_OpenStreetMapHOT_0);
         map.createPane('pane_GoogleSatelite_1');
         map.getPane('pane_GoogleSatelite_1').style.zIndex = 401;
         var layer_GoogleSatelite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
@@ -186,11 +249,10 @@
             maxNativeZoom: 18
         });
         layer_GoogleSatelite_1;
-        map.addLayer(layer_GoogleSatelite_1);
-        map.createPane('pane_PetaUdaraRW009MalakaSari_2');
-        map.getPane('pane_PetaUdaraRW009MalakaSari_2').style.zIndex = 402;
-        var layer_PetaUdaraRW009MalakaSari_2 = L.tileLayer('file:///D:/Punya KAMIL/Dari Documents/Karang Taruna RW. 09/9 MASA Creative Studio/Mapping RW 009 MS/XYZ Tiles/{z}/{x}/{y}.png', {
-            pane: 'pane_PetaUdaraRW009MalakaSari_2',
+        map.createPane('pane_OrthophotoDroneRW009MalakSari24September2026_2');
+        map.getPane('pane_OrthophotoDroneRW009MalakSari24September2026_2').style.zIndex = 402;
+        var layer_OrthophotoDroneRW009MalakSari24September2026_2 = L.tileLayer('file:///D:/Punya KAMIL/Dari Documents/Karang Taruna RW. 09/9 MASA Creative Studio/Mapping RW 009 MS/XYZ Tiles/{z}/{x}/{y}.png', {
+            pane: 'pane_OrthophotoDroneRW009MalakSari24September2026_2',
             opacity: 1.0,
             attribution: '',
             minZoom: 14,
@@ -198,13 +260,87 @@
             minNativeZoom: 14,
             maxNativeZoom: 23
         });
-        layer_PetaUdaraRW009MalakaSari_2;
-        map.addLayer(layer_PetaUdaraRW009MalakaSari_2);
+        layer_OrthophotoDroneRW009MalakSari24September2026_2;
+        map.addLayer(layer_OrthophotoDroneRW009MalakSari24September2026_2);
+        function pop_BatasRT_3(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    layer_BatasRT_3.resetStyle(e.target);
+
+                    // tetap sembunyikan outline kalau zoom < 17
+                    if (map.getZoom() < 17) {
+                        e.target.setStyle({
+                            opacity: 0,
+                            fillOpacity: 0
+                        });
+                    }
+                },
+
+                mouseover: function (e) {
+
+                    // Zoom jauh: jangan tampilkan highlight
+                    if (map.getZoom() < 17) {
+                        return;
+                    }
+
+                    highlightFeature(e);
+                }
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">keterangan</th>\
+                        <td class="visible-with-data" id="keterangan">' + (feature.properties['keterangan'] !== null ? autolinker.link(String(feature.properties['keterangan']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['sumber'] !== null ? autolinker.link(String(feature.properties['sumber']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+            layer.on('popupopen', function (e) {
+                addClassToPopupIfMedia(content, e.popup);
+            });
+            layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BatasRT_3_0() {
+            return {
+                pane: 'pane_BatasRT_3',
+                opacity: 1,
+                color: 'rgba(235,244,25,1.0)',
+                dashArray: '10.0,8.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BatasRT_3');
+        map.getPane('pane_BatasRT_3').style.zIndex = 403;
+        map.getPane('pane_BatasRT_3').style['mix-blend-mode'] = 'normal';
+        var layer_BatasRT_3 = new L.geoJson(json_BatasRT_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BatasRT_3',
+            layerName: 'layer_BatasRT_3',
+            pane: 'pane_BatasRT_3',
+            onEachFeature: pop_BatasRT_3,
+            style: style_BatasRT_3_0,
+        });
+        bounds_group.addLayer(layer_BatasRT_3);
+        map.addLayer(layer_BatasRT_3);
         var overlaysTree = [
-            {label: "Peta Udara RW 009 Malaka Sari", layer: layer_PetaUdaraRW009MalakaSari_2},
-            {label: "Google Satelite", layer: layer_GoogleSatelite_1, radioGroup: 'bm' },
-            {label: "OpenStreetMap HOT", layer: layer_OpenStreetMapHOT_0, radioGroup: 'bm' },]
-        var lay = L.control.layers.tree(null, overlaysTree,{
+            {
+                label: '<b>Peta RW 009 Malaka Sari</b>', selectAllCheckbox: true, children: [
+                    { label: '<img src="legend/BatasRT_3.png" /> Batas RT', layer: layer_BatasRT_3 },
+                    { label: "Orthophoto Drone RW 009 Malak Sari — 24 September 2026", layer: layer_OrthophotoDroneRW009MalakSari24September2026_2 },]
+            },
+            {
+                label: '<b>Basemap</b>', selectAllCheckbox: true, children: [
+                    { label: "Google Satelite", layer: layer_GoogleSatelite_1, radioGroup: 'bm' },
+                    { label: "OpenStreetMap HOT", layer: layer_OpenStreetMapHOT_0, radioGroup: 'bm' },]
+            },]
+        var lay = L.control.layers.tree(null, overlaysTree, {
             //namedToggle: true,
             //selectorBack: false,
             //closedSymbol: '&#8862; &#x1f5c0;',
@@ -215,6 +351,65 @@
         });
         lay.addTo(map);
         setBounds();
-        </script>        
-    </body>
+        var i = 0;
+        layer_BatasRT_3.eachLayer(function (layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['label'] !== null ? String('<div style="color: #ffffff; font-size: 11pt; font-weight: bold; font-family: \'Century Gothic\', sans-serif;">' + layer.feature.properties['label']).replace(/\\n/g, '<br>') + '</div>' : ''), { permanent: true, offset: [-0, -16], className: 'css_BatasRT_3' });
+            labels.push(layer);
+            totalMarkers += 1;
+            layer.added = true;
+            addLabel(layer, i);
+            i++;
+        });
+        resetLabels([layer_BatasRT_3]);
+        map.on("zoomend", function () {
+            resetLabels([layer_BatasRT_3]);
+        });
+        map.on("layeradd", function () {
+            resetLabels([layer_BatasRT_3]);
+        });
+        map.on("layerremove", function () {
+            resetLabels([layer_BatasRT_3]);
+        });
+
+        // Setting Scale Dependent Visibility
+        const rtLayer = layer_BatasRT_3;   // sesuaikan dengan nama variabel Anda
+        const ZOOM_OUTLINE_RT = 17;
+        const ZOOM_LABEL_RT = 18;
+
+        function updateRtVisibility() {
+            const z = map.getZoom();
+
+            rtLayer.eachLayer(function (featureLayer) {
+
+                // Zoom jauh: sembunyikan outline + label
+                if (z < ZOOM_OUTLINE_RT) {
+                    featureLayer.setStyle({
+                        opacity: 0,
+                        fillOpacity: 0
+                    });
+                    featureLayer.closeTooltip();
+                    return;
+                }
+
+                // Kembalikan style asli qgis2web
+                rtLayer.resetStyle(featureLayer);
+
+                // Label hanya mulai zoom 18
+                if (z >= ZOOM_LABEL_RT) {
+                    featureLayer.openTooltip();
+                } else {
+                    featureLayer.closeTooltip();
+                }
+            });
+        }
+
+        map.on('zoomend', updateRtVisibility);
+        updateRtVisibility();
+    </script>
+</body>
+
 </html>
